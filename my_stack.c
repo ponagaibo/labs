@@ -34,10 +34,7 @@ int top_s(Stack s)
 
 void push_s(Stack s, int c)
 {
-    if(s->top>=s->size)
-    {
-        resize_s(s);
-    }
+    if(s->top>=s->size) resize_s(s);
     s->data[s->top]=c;
     s->top++;
 }
@@ -62,8 +59,5 @@ int size_s(Stack s)
 void print_s(Stack s)
 {
     int i=0;
-    for(i=(s->top)-1;i>=0;i--)
-    {
-        printf("%d\n",s->data[i]);
-    }
+    for(i=(s->top)-1;i>=0;i--)  printf("%d\n",s->data[i]);
 }
