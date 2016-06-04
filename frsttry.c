@@ -1,85 +1,8 @@
-#include <stdio.h>
-#define STACK_SIZE 30
-#define MULT 2
-
-///.................................STACK..................................///
-
-struct node_s
-{
-    int *data;
-    int size;
-    int top;
-};
-
-typedef struct node_s Node_s;
-typedef struct node_s* Stack;
-
-Stack create_s() {
-    Stack out=NULL;
-    out=malloc(sizeof(Node_s));
-    out->size=STACK_SIZE;
-    out->data=malloc(out->size*sizeof(int));
-    out->top=0;
-    return out;
-}
-
-void delete_s(Stack *s) {
-    free((*s)->data);
-    free(*s);
-    *s=NULL;
-}
-
-void resize(Stack s) {
-    s->size*=MULT;
-    s->data=realloc(s->data, s->size*sizeof(int));
-}
-
-int top_s(Stack s)
-{
-    if(s->top>0) return s->data[s->top-1];
-    else{
-        printf("Error! Stack is empty.\n");
-        return -111;
-    }
-}
-
-void push_s(Stack s, int c)
-{
-    if(s->top>=s->size)
-    {
-        resize(s);
-    }
-    s->data[s->top]=c;
-    s->top++;
-}
-
-int pop_s(Stack s)
-{
-    if(s->top>0)
-    {
-        s->top--;
-        return s->data[s->top];
-    }else{
-        printf("Error! Stack is empty.\n");
-        return -111;
-    }
-}
-
-int size_s(Stack s)
-{
-    return s->top;
-}
-
-void print_s(Stack s)
-{
-    int i=0;
-    for(i=(s->top)-1;i>=0;i--)
-    {
-        printf("%d\n",s->data[i]);
-    }
-}
-
-//........................................................................//
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include"my_stack.h"
+#include"stack_s.h"
 
 Stack merge(Stack f, Stack s)
 {
@@ -92,7 +15,7 @@ Stack merge(Stack f, Stack s)
     int i=0,elem,j,g=0;
     res=create_s();
     //printf("in merge\n");
-    while((s->top)!=0&&(f->top)!=0)
+    while(((s->top)!=NULL)&&((f->top)!=NULL))
     {
         //printf("f and s isnt null\n");
         if(top_s(f)<=top_s(s))
@@ -107,19 +30,25 @@ Stack merge(Stack f, Stack s)
         }
         i++;
     }
-    if((s->top)!=0)
+    if((s->top)!=NULL)
     {
         //printf("s isnt null\n");
+      while((s->top)!=NULL)
+      {
         elem=pop_s(s);
         temp[i]=elem;
         i++;
+      }
     }
-    if((f->top)!=0)
+    if((f->top)!=NULL)
     {
         //printf("f isnt null\n");
+        while((f->top)!=NULL)
+        {
         elem=pop_s(f);
         temp[i]=elem;
         i++;
+        }
     }
     //printf("i=%d, total size=%d\n",i,k);
     for(j=i-1;j>=0;j--)
@@ -132,20 +61,30 @@ Stack merge(Stack f, Stack s)
     return res;
 }
 
+Stack r,p;
+int bb=0;
+
 Stack merge_sort(Stack orig, int size, Stack res)
 {
-    printf("in merge sort\n");
+    //printf("in merge sort\n");
     Stack half=create_s();
     Stack temp=create_s();
     Stack temp2=create_s();
+    r=create_s();
+    p=create_s();
+    Stack t=create_s();
     int size_half=size*0.5;
     int size_orig=size-size_half;
     int i,elem,elem2;
-    printf("size=%d, size half=%d, size orig=%d\norig:\n",size, size_half, size_orig);
+    printf("size=%d, size half=%d, size orig=%d\n~~~~~~~~orig:~~~~~~~~\n",size, size_half, size_orig);
     print_s(orig);
+    puts("~~~~~~~~~~~~~~~~~~~~~");
+    printf("***now res is:***\n");
+    print_s(res);
+    puts("*****************");
     if(size>=3)
     {
-        //printf("size>=3 \n");
+        printf("size>=3 \n");
         for(i=0;i<size_half;i++)
         {
             if(size_s(orig)>0)
@@ -163,31 +102,47 @@ Stack merge_sort(Stack orig, int size, Stack res)
             }
 
         }
-        printf("orig and half:\n");
+        printf("---orig and half:---\n");
         print_s(orig);
         puts("~~~");
         print_s(half);
         puts("----------");
         merge_sort(orig,size_orig,res);
-        merge_sort(half,size_half,res);
         res=merge(orig,half);
-        print_s(res);
+        t=r;
+        r=merge(res,t);
+        res=r;
+        merge_sort(half,size_half,res);
+        puts("_______after rec r:_______\n");
+        print_s(r);
+        puts("__________________________");
     }else{
         printf("size=2 or 1\n");
         //if(size==2)
         //{
             //printf("size=2\n");
+            ++bb;
+            printf("\tbb=%d\n\n",bb);
+            push_s(p,bb);
+            puts("test stack");
+            print_s(p);
             if(size_s(orig)>0)
             {
                 elem=pop_s(orig);
                 push_s(half,elem);
-                printf("orig and half:\n");
+                printf("---orig and half:---\n");
                 print_s(orig);
                 puts("~~~~~~");
                 print_s(half);
+                puts("----------");
                 res=merge(orig,half);
-                puts("res :\n");
-                print_s(res);
+                t=r;
+                r=merge(res,t);
+                puts("============== r: ============");
+                print_s(r);
+                puts("==============================");
+                //puts("res :\n");
+                //print_s(res);
                 /*if(top_s(orig)>=elem)
                 {
                     push_s(orig,elem);
@@ -204,9 +159,10 @@ Stack merge_sort(Stack orig, int size, Stack res)
         //}
     }
     printf("res:\n");
-    print_s(res);
-    printf("end merge sort\n");
-    return res;
+    res=r;
+    print_s(r);
+    //printf("end merge sort\n");
+    return r;
 }
 
 Stack cat(Stack f, Stack s)
@@ -251,13 +207,13 @@ int main()
     Stack frst=create_s();
     Stack scnd=create_s();
     ///.......................................///
-    /*printf("Enter size of first stack:\n");
+
+    printf("Enter size of first stack:\n");
     scanf("%d", &f_size);
     printf("Enter elements of first stack:\n");
-    int i;
     if(f_size>0)
     {
-        for(i=0;i<f_size;i++)
+        for(int i=0;i<f_size;i++)
         {
             scanf("%d",&num);
             push_s(frst,num);
@@ -273,7 +229,7 @@ int main()
     printf("Enter elements of second stack:\n");
     if(s_size>0)
     {
-        for(i=0;i<s_size;i++)
+        for(int i=0;i<s_size;i++)
         {
             scanf("%d",&num);
             push_s(scnd,num);
@@ -281,11 +237,86 @@ int main()
     }else{
         printf("Wrong size of stack\n");
     }
-    print_s(scnd);*/
+    print_s(scnd);
+
+    /*
+    Stack a=create_s();
+    a=merge(frst,scnd);
+    puts("merged stack:\n");
+    print_s(a);*/
     ///.......................................///
+
     //puts("---------------");
     //printf("size of 2 stack %d----------, %d\n",size_s(scnd), scnd->top);
-    Stack res=create_s();
+    Stack_st res=create_st();
+    Stack_st temp=create_st();
+    //push_st(temp, frst);
+    //push_st(temp,scnd);
+    Stack tt=cat(frst, scnd);
+    puts("~~~~~~~");
+    print_s(tt);
+    int el;
+    Stack ell=create_s();
+    while(tt->top>0)
+    {
+      //el=pop_s(tt);
+      ell=create_s();
+      push_s(ell,pop_s(tt));
+      push_st(res,ell);
+    }
+    while(res->topst>0)
+    {
+      push_st(temp,pop_st(res));
+    }
+    //print_s(tt);
+    //tt=pop_st(temp);
+    //push_st(res,tt);
+    //tt=pop_st(temp);
+    //push_st(res,tt);
+    printf("size of st_st=%d\n", size_st(temp));
+    print_st(temp);
+
+    Stack swap=create_s();
+    Stack a=create_s();
+    Stack b=create_s();
+    a=pop_st(temp);
+    b=pop_st(temp);
+    swap=merge(a,b);
+    push_st(res,swap);
+
+    swap=create_s();
+    a=create_s();
+    b=create_s();
+    a=pop_st(temp);
+    b=pop_st(temp);
+    swap=merge(a,b);
+    push_st(res,swap);
+    temp=create_st();
+    while(res->topst>0)
+    {
+      push_st(temp,pop_st(res));
+    }
+
+    printf("first step\n");
+    print_st(temp);
+
+    swap=create_s();
+    a=create_s();
+    b=create_s();
+    a=pop_st(temp);
+    b=pop_st(temp);
+    swap=merge(a,b);
+    push_st(res,swap);
+    temp=create_st();
+    while(res->topst>0)
+    {
+      push_st(temp,pop_st(res));
+    }
+
+    printf("second step\n");
+    print_st(temp);
+
+/*
     printf("Enter size of stack:\n");
     scanf("%d", &f_size);
     printf("Enter elements of stack:\n");
@@ -309,8 +340,12 @@ int main()
     Stack end=create_s();
     tm=res;
     res=merge_sort(tm,orsize,end);
-    puts("end res:\n");
+    puts("after merge sort end res:");
     print_s(res);
+    puts("test stack:");
+    print_s(p);
+*/
+
     //int a,b,x,y,z=-1,j=1;
 
     /*while(frst!=NULL)
