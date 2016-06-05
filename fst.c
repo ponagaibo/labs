@@ -47,6 +47,7 @@ void interpret(Vector index, Vector clmn, Vector value, FILE* fo)
   fclose(fo);
 }
 
+/*
 void print_m(Vector index, Vector clmn, Vector value)
 {
   int elem, next, state, l;
@@ -107,7 +108,137 @@ void print_m(Vector index, Vector clmn, Vector value)
     //}
   }
 }
+*/
 
+/*                     ~~~~ it works, don't delete ~~~~
+
+
+void print_m(Vector index, Vector clmn, Vector value)
+{
+  //state_ind - 1, если есть следующая строка, иначе 0
+  //state_cl - 1, если еще есть ненулевыt элементы в строке, иначе 0
+  //begin_cl - номер столбца с первым ненулевым элементом строки
+  //end_cl - номер столбца с последним ненулевым элементом строки
+  //this_line-next_line - индексы стобцов с ненулевыми элементами данной строки
+  int state_ind, state_cl, next_line, this_line;
+  for(int i=0; i<lines; i++)
+  {
+    next_line=-1, state_ind=0, state_cl=1;
+    //printf("index is %d\t", index->data[i]);
+    if(index->data[i]==-1)
+    {
+      for(int j=0; j<columns; j++) printf("0 ");
+      printf("\n");
+    }else{
+      this_line=index->data[i];
+      for(int j=i+1; j<lines; j++)
+      {
+        if(index->data[j]!=-1)
+        {
+          next_line=index->data[j];
+          state_ind=1;
+        }
+      }
+      //printf("this line is %d, next line is %d, state ind is %d\n", this_line, next_line, state_ind);
+      if(state_ind)
+      {
+        for(int j=1; j<=columns; j++)
+        {
+          if(clmn->data[this_line]==j && state_cl)
+          {
+            printf("%d ", value->data[this_line]);
+            this_line++;
+          }else printf("0 ");
+          if(this_line==next_line) state_cl=0;
+        }
+        printf("\n");
+      }else{
+        for(int j=1; j<=columns; j++)
+        {
+          if(clmn->data[this_line]==j && state_cl)
+          {
+            printf("%d ", value->data[this_line]);
+            this_line++;
+          }else printf("0 ");
+          if(clmn->data[this_line]==0) state_cl=0;
+        }
+        printf("\n");
+      }
+    }
+  }
+}
+*/
+
+void print_m(Vector index, Vector clmn, Vector value, int lines_m, int columns_m)
+{
+  int state_cl, next_line, this_line;
+  for(int i=0; i<lines_m; i++)
+  {
+    next_line=-1, state_cl=1;
+    //printf("index is %d\t", index->data[i]);
+    if(index->data[i]==-1)
+    {
+      for(int j=0; j<columns_m; j++) printf("0 ");
+      printf("\n");
+    }else{
+      this_line=index->data[i];
+      for(int j=i+1; j<lines; j++)
+      {
+        if(index->data[j]!=-1)
+        {
+          next_line=index->data[j];
+        }
+      }
+      //printf("this line is %d, next line is %d, state ind is %d\n", this_line, next_line, state_ind);
+        for(int j=1; j<=columns_m; j++)
+        {
+          if(clmn->data[this_line]==j && state_cl)
+          {
+            printf("%d ", value->data[this_line]);
+            this_line++;
+          }else printf("0 ");
+          if(this_line==next_line || clmn->data[this_line]==0) state_cl=0;
+        }
+        printf("\n");
+    }
+  }
+}
+
+void mult_vect(const Vector cl_vc, const Vector index, const Vector clmn, const Vector value, Vector* index_res, Vector* clmn_res, Vector* value_res)
+{
+  int this_line, next_line, state, el_m, el_v, el_res, ml, l=0;
+  for(int i=0; i<lines; i++)
+  {
+    state=1, next_line=-1, el_res=0;
+    if(index->data[i]==-1) push_vect(*index_res, -1);
+    else{
+      this_line=index->data[i];
+      for(int j=i+1; j<lines; j++)
+      {
+        if(index->data[j]!=-1) next_line=index->data[j];
+      }
+      for(int j=1; j<=columns; j++)
+      {
+        if(clmn->data[this_line]==j && state)
+        {
+          el_m=value->data[this_line];
+          el_v=cl_vc->data[j-1];
+          ml=el_m * el_v;
+          el_res+=ml;
+          this_line++;
+        }
+        if(this_line==next_line || clmn->data[this_line]==0) state=0;
+      }
+      if(el_res!=0)
+      {
+        push_vect(*index_res, l);
+        push_vect(*clmn_res, 1);
+        push_vect(*value_res, el_res);
+        l++;
+      }else push_vect(*index_res, -1);
+    }
+  }
+}
 
 int main()
 {
@@ -135,6 +266,8 @@ int main()
     fprintf(fo, "\n");
   }
   fclose(fo);
+
+  /*                  *** print entered matrix ***
   if((fo=fopen("matr.txt","r")) == NULL) {
     printf("Error! Can not open file.\n");
   }
@@ -151,6 +284,7 @@ int main()
   }
   fclose(fo);
   printf("\n");
+  */
   ///.........................................///
   Vector index=create_vect();
   Vector clmn=create_vect();
@@ -162,8 +296,27 @@ int main()
   print_vect(clmn);
   printf("vector of values ");
   print_vect(value);
-  //puts("print matrix from vectors");
-  //print_m(index, clmn, value);
-
+  puts("print matrix from vectors");
+  print_m(index, clmn, value, lines, columns);
+  printf("Enter column-vector, size %d x 1:\n", columns);
+  Vector cl_vc=create_vect();
+  int el;
+  for(int i=0; i<columns; i++){
+    scanf("%d", &el);
+    push_vect(cl_vc, el);
+  }
+  print_vect(cl_vc);
+  Vector index_res=create_vect();
+  Vector clmn_res=create_vect();
+  Vector value_res=create_vect();
+  mult_vect(cl_vc, index, clmn, value, &index_res, &clmn_res, &value_res);
+  printf("vector res of index ");
+  print_vect(index_res);
+  printf("vector res of columns ");
+  print_vect(clmn_res);
+  printf("vector res of values ");
+  print_vect(value_res);
+  puts("print res matrix from vectors");
+  print_m(index_res, clmn_res, value_res, lines, 1);
   return 0;
 }
