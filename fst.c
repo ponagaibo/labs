@@ -47,149 +47,25 @@ void interpret(Vector index, Vector clmn, Vector value, FILE* fo)
   fclose(fo);
 }
 
-/*
-void print_m(Vector index, Vector clmn, Vector value)
-{
-  int elem, next, state, l;
-  next=-1;
-  state=1;
-  int t=0;
-  for(int i=0; i<columns; i++)
-  {
-    state=1;
-    //while(t!=lines)
-    //{
-      if(index->data[i]==-1)
-      {
-        //printf("index is -1\n");
-        for(int j=0; j<columns; j++) printf("0 ");
-        printf("\n");
-      }else{
-        //printf("index is not -1\n");
-        elem=index->data[i];
-        for(int k=i+1; k<columns; k++)
-        {
-          if(index->data[k]!=-1&&state==1)//state - до конца строки все -1
-          {
-            next=index->data[k];
-            state=0;
-          }
-        }
-        //printf("state=%d, elem=%d, next=%d\n",state, elem, next);
-        if(state)
-        {
-          l=elem;
-          for(int num=1; num<=columns; num++)
-          {
-            //printf("\n\tnum=%d, columns=%d, clmn->data[l]=%d\n", num, columns, clmn->data[l]);
-            if(clmn->data[l]==num)
-            {
-              printf("%d ",value->data[l]);
-              l++;
-            }else printf("0 ");
-          }
-          printf("\n");
-        }else{
-          l=elem;
-          for(int num=1; num<=columns; num++)
-          {
-              if(clmn->data[l]==num&&l!=next)
-              {
-                printf("%d ",value->data[l]);
-                l++;
-              }else{
-                printf("0 ");
-              }
-          }
-          printf("\n");
-        }
-      }
-      //t++;
-    //}
-  }
-}
-*/
-
-/*                     ~~~~ it works, don't delete ~~~~
-
-
-void print_m(Vector index, Vector clmn, Vector value)
-{
-  //state_ind - 1, если есть следующая строка, иначе 0
-  //state_cl - 1, если еще есть ненулевыt элементы в строке, иначе 0
-  //begin_cl - номер столбца с первым ненулевым элементом строки
-  //end_cl - номер столбца с последним ненулевым элементом строки
-  //this_line-next_line - индексы стобцов с ненулевыми элементами данной строки
-  int state_ind, state_cl, next_line, this_line;
-  for(int i=0; i<lines; i++)
-  {
-    next_line=-1, state_ind=0, state_cl=1;
-    //printf("index is %d\t", index->data[i]);
-    if(index->data[i]==-1)
-    {
-      for(int j=0; j<columns; j++) printf("0 ");
-      printf("\n");
-    }else{
-      this_line=index->data[i];
-      for(int j=i+1; j<lines; j++)
-      {
-        if(index->data[j]!=-1)
-        {
-          next_line=index->data[j];
-          state_ind=1;
-        }
-      }
-      //printf("this line is %d, next line is %d, state ind is %d\n", this_line, next_line, state_ind);
-      if(state_ind)
-      {
-        for(int j=1; j<=columns; j++)
-        {
-          if(clmn->data[this_line]==j && state_cl)
-          {
-            printf("%d ", value->data[this_line]);
-            this_line++;
-          }else printf("0 ");
-          if(this_line==next_line) state_cl=0;
-        }
-        printf("\n");
-      }else{
-        for(int j=1; j<=columns; j++)
-        {
-          if(clmn->data[this_line]==j && state_cl)
-          {
-            printf("%d ", value->data[this_line]);
-            this_line++;
-          }else printf("0 ");
-          if(clmn->data[this_line]==0) state_cl=0;
-        }
-        printf("\n");
-      }
-    }
-  }
-}
-*/
-
 void print_m(Vector index, Vector clmn, Vector value, int lines_m, int columns_m)
 {
   int state_cl, next_line, this_line;
   for(int i=0; i<lines_m; i++)
   {
     next_line=-1, state_cl=1;
-    //printf("index is %d\t", index->data[i]);
     if(index->data[i]==-1)
     {
       for(int j=0; j<columns_m; j++) printf("0 ");
       printf("\n");
     }else{
       this_line=index->data[i];
-      for(int j=i+1; j<lines; j++)
+      for(int j=i+1; j<lines_m; j++)
       {
         if(index->data[j]!=-1)
         {
           next_line=index->data[j];
         }
       }
-      //printf("this line is %d, next line is %d, state ind is %d\n", this_line, next_line, state_ind);
         for(int j=1; j<=columns_m; j++)
         {
           if(clmn->data[this_line]==j && state_cl)
@@ -244,14 +120,13 @@ int main()
 {
   int elem;
   FILE* fo;
-  ///..................test file...............///
   fo=fopen("matr.txt","wb");
   if(fo==0) {
     printf("Error! Can not open file.\n");
   }
   puts("Enter size of matrix:\nNumber of lines:\n");
   scanf("%d", &lines);
-  puts("Number of column:\n");
+  puts("Number of columns:\n");
   scanf("%d", &columns);
   puts("Enter elements of matrix:\n");
 
@@ -290,7 +165,7 @@ int main()
   Vector clmn=create_vect();
   Vector value=create_vect();
   interpret(index, clmn, value, fo);
-  printf("vector of index ");
+  printf("vector of indexes ");
   print_vect(index);
   printf("vector of columns ");
   print_vect(clmn);
@@ -305,6 +180,7 @@ int main()
     scanf("%d", &el);
     push_vect(cl_vc, el);
   }
+  puts("column-vector:");
   print_vect(cl_vc);
   Vector index_res=create_vect();
   Vector clmn_res=create_vect();
