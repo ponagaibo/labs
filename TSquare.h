@@ -10,13 +10,20 @@ private:
     size_t side;
 public:
     TSquare();
-    TSquare(std::istream &is);
     TSquare(size_t side_n);
     TSquare(const TSquare& orig);
+    TSquare(std::istream &is);
 
-    TSquare& operator=(const TSquare& rightSq);
     friend std::ostream& operator<<(std::ostream& os, const TSquare& obj);
+    friend std::istream& operator>>(std::istream& is, TSquare& obj);
+    friend TSquare operator+(const TSquare& left, const TSquare& right);
+    TSquare& operator++();
+    bool operator==(const TSquare& rightSq);
+    TSquare& operator=(const TSquare& rightSq);
+
+    double SquareOfFigure();
     void Print();
+
     virtual ~TSquare();
 };
 

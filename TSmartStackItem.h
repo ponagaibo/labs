@@ -7,6 +7,7 @@
 template<class T> class TSmartStackItem {
 public:
     TSmartStackItem(const std::shared_ptr<T>& figure);
+    TSmartStackItem(const std::shared_ptr<TSmartStackItem<T>>& orig);
     template<class A> friend std::ostream& operator<<(std::ostream& os, const TSmartStackItem<A>& obj);
     std::shared_ptr<TSmartStackItem<T>> SetNext(std::shared_ptr<TSmartStackItem> &next);
     std::shared_ptr<TSmartStackItem<T>> GetNext();

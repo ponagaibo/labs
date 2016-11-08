@@ -3,6 +3,10 @@
 
 template <class T> TSmartStack<T>::TSmartStack() : head(nullptr) {}
 
+template <class T> TSmartStack<T>::TSmartStack(const TSmartStack<T>& orig) {
+    head = orig.head;
+}
+
 template <class T> void TSmartStack<T>::Push(std::shared_ptr<T> &&figure) {
     std::shared_ptr<TSmartStackItem<T>> other(new TSmartStackItem<T>(figure));
     other->SetNext(head);
@@ -25,6 +29,7 @@ template <class T> std::shared_ptr<T> TSmartStack<T>::Pop() {
 template <class T> std::ostream& operator<<(std::ostream& os, const TSmartStack<T>& stack) {
     std::shared_ptr<TSmartStackItem<T>> item(stack.head);
     while(item != nullptr) {
+        //os << *item;
         item->Print();
         item = item->GetNext();
     }

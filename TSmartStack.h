@@ -8,6 +8,8 @@
 template <class T> class TSmartStack {
 public:
     TSmartStack();
+    TSmartStack(const TSmartStack<T>& orig);
+
     void Push(std::shared_ptr<T> &&figure);
     bool Empty();
     std::shared_ptr<T> Pop();

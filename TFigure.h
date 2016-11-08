@@ -3,6 +3,7 @@
 
 class TFigure {
 public:
+    virtual double SquareOfFigure() = 0;
     virtual void Print() = 0;
     virtual ~TFigure() {};
 };

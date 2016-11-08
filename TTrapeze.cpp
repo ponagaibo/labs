@@ -29,6 +29,10 @@ TTrapeze& TTrapeze::operator=(const TTrapeze& rightTr) {
     return *this;
 }
 
+double TTrapeze::SquareOfFigure() {
+    return double((side_a + side_b)/ 2.0 * h);
+}
+
 void TTrapeze::Print() {
     std::cout << "TRAPEZE: a = " << side_a << ", b = " << side_b << ", h = " << h << std::endl;
 }

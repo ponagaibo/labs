@@ -17,6 +17,7 @@ public:
 
     TRectangle& operator=(const TRectangle& rightRe);
     friend std::ostream& operator<<(std::ostream& os, const TRectangle& obj);
+    double SquareOfFigure();
     void Print();
     virtual ~TRectangle();
 };

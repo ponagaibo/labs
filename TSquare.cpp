@@ -15,6 +15,24 @@ TSquare::TSquare(size_t side_n) : side(side_n) {
     std::cout << "Square created: " << side << std::endl;
 }
 
+std::ostream& operator<<(std::ostream& os, const TSquare& obj) {
+    //os << "SQUARE: side = " << obj.side;
+    return os;
+}
+std::istream& operator>>(std::istream& is, TSquare& obj) {
+    is >> obj.side;
+    return is;
+}
+TSquare operator+(const TSquare& leftSq, const TSquare& rightSq) {
+    return TSquare(leftSq.side + rightSq.side);
+}
+TSquare& TSquare::operator++() {
+    side++;
+    return *this;
+}
+bool TSquare::operator==(const TSquare& rightSq) {
+    return side == rightSq.side;
+}
 TSquare& TSquare::operator=(const TSquare& rightSq) {
     if (this == &rightSq) {
         return *this;
@@ -23,13 +41,11 @@ TSquare& TSquare::operator=(const TSquare& rightSq) {
     return *this;
 }
 
+double TSquare::SquareOfFigure() {
+    return double (side * side);
+}
 void TSquare::Print() {
     std::cout << "SQUARE: side = " << side << std::endl;
-}
-
-std::ostream& operator<<(std::ostream& os, const TSquare& obj) {
-    //os << "SQUARE: side = " << obj.side;
-    return os;
 }
 
 TSquare::~TSquare() {

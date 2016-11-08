@@ -18,6 +18,7 @@ public:
 
     TTrapeze& operator=(const TTrapeze& rightTr);
     friend std::ostream& operator<<(std::ostream& os, const TTrapeze& obj);
+    double SquareOfFigure();
     void Print();
     virtual ~TTrapeze();
 };

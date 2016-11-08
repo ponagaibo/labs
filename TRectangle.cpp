@@ -26,6 +26,10 @@ TRectangle& TRectangle::operator=(const TRectangle& rightRe) {
     return *this;
 }
 
+double TRectangle::SquareOfFigure() {
+    return double(side_a * side_b);
+}
+
 void TRectangle::Print() {
     std::cout << "RECTANGLE: a = " << side_a << ", b = " << side_b << std::endl;
 }
