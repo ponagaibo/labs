@@ -13,7 +13,7 @@ using std::cin; using std::cout; using std::endl; using std::string;
 
 void PrintVect(const std::vector<std::pair<unsigned int, std::pair<unsigned int,unsigned int> > >& textBuf) {
 	cout << "*** PRINT VEC ***" << endl;
-	cout << "size of vector: " << textBuf.size() << endl;
+	//cout << "size of vector: " << textBuf.size() << endl;
 	for(unsigned int i = 0; i < textBuf.size(); i++) {
 		unsigned int sp;
         std::cout << "[ " << textBuf.at(i).first << ", " << (textBuf.at(i).second).first
@@ -41,19 +41,33 @@ std::vector<std::pair<unsigned int,unsigned int> >& res) {
 	unsigned int r = 0;
 
 	for (unsigned int i = 1; i < n; ++i) {
+		//std::cout << "TEXT:" << std::endl;
+		//PrintVect(vec);
+		//std::cout << std::endl;
+		//std::cout << "i = " << i << ", z[i] = " << z.at(i) << ", l = " << l << ", r = " << r << endl;
+
 		int min = std::min(r - i, z.at(i - l));
 		z.at(i) = std::max( 0, min );
 		while (i + z.at(i) < n && vec.at(z.at(i)).first == vec.at(i + z.at(i)).first) {
+			//cout << "while equal, z[i] = " << z[i] << ", i = " << i << endl;
 			++z.at(i);
 		}
 
-		if (i + z.at(i) >= r) {
+		if (i + z.at(i) <= r) {
             l = i;
-            r = i + z.at(i);
+            r = i + z.at(i) - 1;
+			//cout << "new border, l = " << i << ", r = " << r << endl;
         }
         if (z.at(i) >= pat_len && i >= pat_len) {
+			//cout << "found inclusion! at i = " << i << ", z[i] = " << z.at(i) << endl;
             res.push_back( std::make_pair( (vec.at(i).second).first, (vec.at(i).second).second ));
         }
+/*
+		std::cout << "print z" << std::endl;
+		for(int i = 0; i < z.size(); i++)
+			std::cout << z[i] << ' ';
+		std::cout << std::endl;
+*/
 	}
 }
 
@@ -133,8 +147,9 @@ int main() {
 		GetText(pat, bufferSize);
 	}
 	ZFunc(pat, res);
+	//cout << "inclusions: " << endl;
 	for(unsigned int i = 0; i < res.size(); i++) {
-		std::cout << res.at(i).second << ", " << res.at(i).first << endl;
+		std::cout << res.at(i).second << ',' << res.at(i).first << endl;
 	}
     return 0;
 }
