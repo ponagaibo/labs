@@ -1,0 +1,176 @@
+parents("Anastasia Ponagaibo", "Oleg Ponagaibo", "Vera Bazanova").
+parents("Vera Bazanova", "Alexander Bazanov", "Liudmila Simonova").
+parents("Marina Ponagaibo", "Yuriy Ponagaibo", "Anna Ponagaibo").
+parents("Oleg Ponagaibo", "Yuriy Ponagaibo", "Anna Ponagaibo").
+parents("Liudmila Simonova", "Vasily Simonov", "Anastasia Simonova").
+parents("Alexander Bazanov", "Sergey Bazanov", "Klavdiya Bazanova").
+parents("Olga Bazanova", "Sergey Bazanov", "Klavdiya Bazanova").
+parents("Yuriy Ponagaibo", "Nikolaj Ponagaibo", "Olga Ponagaibo").
+parents("Elena Shapovalova", "Victor Shapovalov", "Olga Bazanova").
+parents("Alexey Shapovalov", "Victor Shapovalov", "Olga Bazanova").
+parents("Alexander Shapovalov", "Victor Shapovalov", "Olga Bazanova").
+parents("Stepan Lipin", "Alexander Lipin", "Elena Shapovalova").
+parents("Ekaterina Lipina", "Alexander Lipin", "Elena Shapovalova").
+parents("Alena Lipina", "Alexander Lipin", "Elena Shapovalova").
+parents("Anastasia Simonova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Nina Batova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Mariya Kolesova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Galina Berdikina", "Mihail Batov", "Nina Batova").
+parents("Leonid Batov", "Mihail Batov", "Nina Batova").
+parents("Alexey Berdikin", "Sergey Berdikin", "Galina Berdikina").
+parents("Timofey Berdikin", "Alexey Berdikin", "Ekaterina Berdikina").
+parents("Ivan Berdikin", "Alexey Berdikin", "Ekaterina Berdikina").
+parents("Evgeny Terehin", "Ivan Terehin", "Marina Ponagaibo").
+parents("Anna Terehina", "Ivan Terehin", "Marina Ponagaibo").
+parents("Nadejda Tolkunova", "Vasily Tolkunov", "Mariya Kolesova").
+parents("Sergey Tolkunov", "Vasily Tolkunov", "Mariya Kolesova").
+parents("Pavel Kremnev", "Nikolaj Kremnev", "Nadejda Tolkunova").
+parents("Dmitriy Tolkunov", "Sergey Tolkunov", "Elena Tolkunova").
+sex("Oleg Ponagaibo", m).
+sex("Vera Bazanova", f).
+sex("Anastasia Ponagaibo", f).
+sex("Liudmila Simonova", f).
+sex("Alexander Bazanov", m).
+sex("Anna Ponagaibo", f).
+sex("Yuriy Ponagaibo", m).
+sex("Vasily Simonov", m).
+sex("Anastasia Simonova", f).
+sex("Sergey Bazanov", m).
+sex("Klavdiya Bazanova", f).
+sex("Nikolaj Ponagaibo", m).
+sex("Olga Bazanova", f).
+sex("Elena Shapovalova", f).
+sex("Victor Shapovalov", m).
+sex("Stepan Lipin", m).
+sex("Alexander Lipin", m).
+sex("Vasilisa Kolesova", f).
+sex("Pavel Kolesov", m).
+sex("Nina Batova", f).
+sex("Mihail Batov", m).
+sex("Galina Berdikina", f).
+sex("Sergey Berdikin", m).
+sex("Alexey Berdikin", m).
+sex("Timofey Berdikin", m).
+sex("Ekaterina Berdikina", f).
+sex("Marina Ponagaibo", f).
+sex("Ivan Terehin", m).
+sex("Evgeny Terehin", m).
+sex("Anna Terehina", f).
+sex("Olga Ponagaibo", f).
+sex("Ekaterina Lipina", f).
+sex("Alena Lipina", f).
+sex("Alexey Shapovalov", m).
+sex("Alexander Shapovalov", m).
+sex("Leonid Batov", m).
+sex("Ivan Berdikin", m).
+sex("Mariya Kolesova", f).
+sex("Vasily Tolkunov", m).
+sex("Nadejda Tolkunova", f).
+sex("Nikolaj Kremnev", m).
+sex("Pavel Kremnev", m).
+sex("Sergey Tolkunov", m).
+sex("Elena Tolkunova", f).
+sex("Dmitriy Tolkunov", m).
+sex("Marina Tolkunova", f).
+
+% relations
+son(A,X):-
+  parents(X,A,_),
+  sex(X,m).
+son(A,X):-
+  parents(X,_,A),
+  sex(X,m).
+
+daughter(A,X):-
+  parents(X,A,_),
+  sex(X,f).
+daughter(A,X):-
+  parents(X,_,A),
+  sex(X,f).
+
+husband(A,X):-
+  parents(_,X,A).
+
+wife(A,X):-
+  parents(_,A,X).
+
+brother(A,X):-
+  sibling(A,X),
+  sex(X,m).
+
+sister(A,X):-
+  sinling(A,X),
+  sex(X,f).
+
+mother(A,X):-
+  parents(A,_,X).
+
+father(A,X):-
+  parents(A,X,_).
+
+% for second cousin
+sibling(X,Y):-
+  parents(X,A,B),
+  parents(Y,A,B),
+  X =\= Y.
+
+cousin(X,Y):-
+  parents(X,A,B),
+  parents(Y,C,D),
+  ( sibling(A,C); sibling(A,D); sibling(B,C); sibling(B,D) ).
+
+second_cousin(X,Y):-
+  parents(X,A,B),
+  parents(Y,C,D),
+  ( cousin(A,C); cousin(A,D); cousin(B,C); cousin(B,D) ).
+
+% checker
+
+check(A,X,son):-
+  son(A,X).
+
+check(A,X,daughter):-
+  daughter(A,X).
+
+check(A,X,mother):-
+  mother(A,X).
+
+check(A,X,father):-
+  father(A,X).
+
+check(A,X,sister):-
+  sister(A,X).
+
+check(A,X,brother):-
+  brother(A,X).
+
+
+% check relations
+move(X,Y):-
+  check(X,Y,R).
+
+prolong([X|T],[Y,X|T]):-
+  move(X,Y),
+  not(member(Y,[X|T])).
+
+search_bdth(X,Y,P):-
+  bdth([[X]],Y,P),
+  reverse(P,L), write(L),nl.
+
+bdth([[X|T]|_],X,[X|T]).
+bdth([P|Q1],X,R):-
+  findall(Z,prolong(P,Z),T),
+  append(Q1,T,Q0),!,
+  bdth(Q0,X,R).
+bdth([_|T],Y,L):-
+  bdth(T,Y,L).
+
+try(X,Y):-
+  sibling(X,Y), sex(Y,m), assert(brother(X,Y)).
+
+?- brother("Anna Terehina",X), write(X), nl.
+
+
+
+
+
