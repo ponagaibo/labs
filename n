@@ -1,0 +1,93 @@
+move(Begin,End):-
+  append(X,['B','W','_'|T],Begin),
+  append(X,['_','W','B'|T],End).
+move(Begin,End):-
+  append(X,['_','W'|T],Begin),
+  append(X,['W','_'|T],End).
+move(Begin,End):-
+  append(X,['_','B','W'|T],Begin),
+  append(X,['W','B','_'|T],End).
+move(Begin,End):-
+  append(X,['B','_'|T],Begin),
+  append(X,['_','B'|T],End).
+
+prolong([X|T],[Y,X|T]):-
+  move(X,Y),
+  not(member(Y,[X|T])).
+  
+%depth:
+
+search_dpth(S,F):-
+  dpth([S],F,Path),
+  print(Path).
+
+dpth([X|T],X,[X|T]).
+dpth(P,F,L):-
+  prolong(P,P1),
+  dpth(P1,F,L).
+
+%breadth:
+
+search_bdth(X,Y):-
+  bdth([[X]],Y,Path),
+  print(Path).
+
+bdth([[X|T]|_],X,[X|T]).
+bdth([P|Q1],X,R):-
+  findall(Z,prolong(P,Z),T),
+  append(Q1,T,Q0),!,
+  bdth(Q0,X,R).
+
+%iterative:
+int(1).
+int(N):-
+  int(M),
+  N is M+1.
+
+search_id(Start,Finish):-
+  int(Level),
+  depth_id([Start],Finish,Path,Level),
+  print(Path).
+
+depth_id([Finish|T],Finish,[Finish|T],0).
+depth_id(Path,Finish,R,N):-
+  N>0,
+  prolong(Path,NewPath),
+  N1 is N-1,
+  depth_id(NewPath,Finish,R,N1).
+
+print([_]):-!.
+print([_,Y|T]):-
+  print([Y|T]),
+  write(Y),
+  write("\n").
+
+?-
+write("** DEPTH **"),%works
+write("\n"),
+BeginState = ['B','B','B','B','_','W','W','W'],
+EndState = ['W','W','W','_','B','B','B','B'],
+
+search_dpth(BeginState, EndState),
+T1 is chronometer(), 
+write("Depth search: "), 
+write(T1), 
+
+write("\n\n** BREADTH ** \n"),
+search_bdth(BeginState,EndState),
+T2 is chronometer(), 
+write("Breadth search: "), 
+write(T2), 
+
+write("\n\n** ITERATIVE **\n"),
+search_id(BeginState, EndState),
+T3 is chronometer(),!,
+write("Iterative search: "), 
+write(T3), 
+write("\n\nDepth search | Breadth search | Iterative search\n"),
+write(T1),
+write("       "),
+write(T2),
+write("         "),
+write(T3),
+write("\n").
