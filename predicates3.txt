@@ -1,0 +1,346 @@
+parents("Anastasia Ponagaibo", "Oleg Ponagaibo", "Vera Bazanova").
+parents("Vera Bazanova", "Alexander Bazanov", "Liudmila Simonova").
+parents("Oleg Ponagaibo", "Yuriy Ponagaibo", "Anna Ponagaibo").
+parents("Marina Ponagaibo", "Yuriy Ponagaibo", "Anna Ponagaibo").
+parents("Liudmila Simonova", "Vasily Simonov", "Anastasia Simonova").
+parents("Alexander Bazanov", "Sergey Bazanov", "Klavdiya Bazanova").
+parents("Olga Bazanova", "Sergey Bazanov", "Klavdiya Bazanova").
+parents("Yuriy Ponagaibo", "Nikolaj Ponagaibo", "Olga Ponagaibo").
+parents("Elena Shapovalova", "Victor Shapovalov", "Olga Bazanova").
+parents("Alexey Shapovalov", "Victor Shapovalov", "Olga Bazanova").
+parents("Alexander Shapovalov", "Victor Shapovalov", "Olga Bazanova").
+parents("Stepan Lipin", "Alexander Lipin", "Elena Shapovalova").
+parents("Ekaterina Lipina", "Alexander Lipin", "Elena Shapovalova").
+parents("Alena Lipina", "Alexander Lipin", "Elena Shapovalova").
+parents("Anastasia Simonova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Nina Batova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Mariya Kolesova", "Pavel Kolesov", "Vasilisa Kolesova").
+parents("Galina Berdikina", "Mihail Batov", "Nina Batova").
+parents("Leonid Batov", "Mihail Batov", "Nina Batova").
+parents("Alexey Berdikin", "Sergey Berdikin", "Galina Berdikina").
+parents("Timofey Berdikin", "Alexey Berdikin", "Ekaterina Berdikina").
+parents("Ivan Berdikin", "Alexey Berdikin", "Ekaterina Berdikina").
+parents("Evgeny Terehin", "Ivan Terehin", "Marina Ponagaibo").
+parents("Anna Terehina", "Ivan Terehin", "Marina Ponagaibo").
+parents("Sergey Tolkunov", "Vasily Tolkunov", "Mariya Kolesova").
+parents("Nadejda Tolkunova", "Vasily Tolkunov", "Mariya Kolesova").
+parents("Pavel Kremnev", "Nikolaj Kremnev", "Nadejda Tolkunova").
+parents("Dmitriy Tolkunov", "Sergey Tolkunov", "Elena Tolkunova").
+sex("Oleg Ponagaibo", m).
+sex("Alexander Shapovalov", m).
+sex("Anastasia Ponagaibo", f).
+sex("Anna Terehina", f).
+sex("Olga Bazanova", f).
+sex("Yuriy Ponagaibo", m).
+sex("Marina Ponagaibo", f).
+sex("Vera Bazanova", f).
+sex("Vasilisa Kolesova", f).
+sex("Elena Tolkunova", f).
+sex("Pavel Kolesov", m).
+sex("Anastasia Simonova", f).
+sex("Alexey Berdikin", m).
+sex("Nina Batova", f).
+sex("Ekaterina Berdikina", f).
+sex("Alexey Shapovalov", m).
+sex("Sergey Tolkunov", m).
+sex("Vasily Tolkunov", m).
+sex("Elena Shapovalova", f).
+sex("Olga Ponagaibo", f).
+sex("Ivan Terehin", m).
+sex("Anna Ponagaibo", f).
+sex("Timofey Berdikin", m).
+sex("Mihail Batov", m).
+sex("Liudmila Simonova", f).
+sex("Nikolaj Ponagaibo", m).
+sex("Sergey Bazanov", m).
+sex("Stepan Lipin", m).
+sex("Ivan Berdikin", m).
+sex("Mariya Kolesova", f).
+sex("Nikolaj Kremnev", m).
+sex("Pavel Kremnev", m).
+sex("Evgeny Terehin", m).
+sex("Ekaterina Lipina", f).
+sex("Sergey Berdikin", m).
+sex("Alexander Bazanov", m).
+sex("Victor Shapovalov", m).
+sex("Alexander Lipin", m).
+sex("Leonid Batov", m).
+sex("Marina Tolkunova", f).
+sex("Klavdiya Bazanova", f).
+sex("Dmitriy Tolkunov", m).
+sex("Alena Lipina", f).
+sex("Galina Berdikina", f).
+sex("Nadejda Tolkunova", f).
+sex("Vasily Simonov", m).
+
+% relations
+son(A,X):- sex(X,m), (parents(X,A,_);parents(X,_,A)).
+
+daughter(A,X):- sex(X,f), (parents(X,A,_);parents(X,_,A)).
+
+husband(A,X):- parents(_,X,A),!.
+
+wife(A,X):- parents(_,A,X),!.
+
+brother(A,X):- sibling(A,X),sex(X,m).
+
+sister(A,X):- sibling(A,X),sex(X,f).
+
+mother(A,X):- parents(A,_,X).
+
+father(A,X):- parents(A,X,_).
+
+grandmother(A,X):- parents(A,B,_),mother(B,X).
+grandmother(A,X):- parents(A,_,C),mother(C,X).
+
+grandfather(A,X):- parents(A,B,_),father(B,X).
+grandfather(A,X):- parents(A,_,C),father(C,X).
+
+uncle(A,X):- parents(A,B,C),(brother(B,X);brother(C,X)).
+
+aunt(A,X):- parents(A,B,C),(sister(B,X);sister(C,X)).
+
+nephew(A,X):- sex(X,m),(uncle(X,A);aunt(X,A)).
+
+niece(A,X):- (uncle(X,A);aunt(X,A)),sex(X,f).
+
+grandson(A,X):- (grandmother(X,A);grandfather(X,A)),sex(X,m).
+
+granddaughter(A,X):- (grandmother(X,A);grandfather(X,A)),sex(X,f).
+
+% for second cousin
+sibling(X,Y):-
+  parents(X,A,B), parents(Y,A,B),
+  X =\= Y.
+
+cousin(X,Y):-
+  parents(X,A,B), parents(Y,C,D), X =\= Y,
+  (sibling(A,C); sibling(A,D); sibling(B,C); sibling(B,D)).
+
+second_cousin(X,Y):-
+  parents(X,A,B),parents(Y,C,D), X =\= Y,
+  (cousin(A,C); cousin(A,D); cousin(B,C); cousin(B,D)).
+
+second_cousin_male(X,Y):- second_cousin(X,Y),sex(Y,m).
+
+second_cousin_female(X,Y):- second_cousin(X,Y),sex(Y,f).
+
+% checker
+
+check(A,X,son):- son(A,X).
+check(A,X,daughter):- daughter(A,X).
+check(A,X,mother):- mother(A,X).
+check(A,X,father):- father(A,X).
+check(A,X,sister):- sister(A,X).
+check(A,X,brother):- brother(A,X).
+check(A,X,grandmother):- grandmother(A,X).
+check(A,X,grandfather):- grandfather(A,X).
+check(A,X,wife):- wife(A,X).
+check(A,X,husband):- husband(A,X).
+check(A,X,uncle):- uncle(A,X).
+check(A,X,aunt):- aunt(A,X).
+check(A,X,nephew):- nephew(A,X).
+check(A,X,niece):- niece(A,X).
+check(A,X,grandson):- grandson(A,X).
+check(A,X,granddaughter):- granddaughter(A,X).
+
+% check relations
+move(X,Y):- check(X,Y,_).
+
+prolong([X|T],[Y,X|T]):-
+  move(X,Y), not(member(Y,[X|T])).
+
+leng([],0).
+leng([_|X],N):-
+  leng(X,M), N is M+1.
+
+search_rel(X,Y,P):-
+  bdth([[X]],Y,P), check_list(P).
+  
+check_list(P):-
+  leng(P,Len), append(X,P1,P),
+  leng(X,N), N == 1, append(Y,_,P1),
+  leng(Y,M), M == 1, get(X,X1), get(Y,Y1),
+  check(Y1,X1,Rr), write(Rr),
+  Len > 2,!, write("-"),check_list(P1).
+check_list(_).
+
+get([X],X).
+
+bdth([[X|T]|_],X,[X|T]).
+bdth([P|Q1],X,R):-
+  findall(Z,prolong(P,Z),T),
+  append(Q1,T,Q0),!,
+  bdth(Q0,X,R).
+bdth([_|T],Y,L):-
+  bdth(T,Y,L).
+
+family(["Oleg Ponagaibo","Alexander Shapovalov","Anastasia Ponagaibo",
+"Anna Terehina","Olga Bazanova","Yuriy Ponagaibo","Marina Ponagaibo",
+"Vera Bazanova","Vasilisa Kolesova","Elena Tolkunova","Pavel Kolesov",
+"Anastasia Simonova","Alexey Berdikin","Nina Batova",
+"Ekaterina Berdikina","Alexey Shapovalov","Sergey Tolkunov",
+"Vasily Tolkunov","Elena Shapovalova","Olga Ponagaibo","Ivan Terehin",
+"Anna Ponagaibo","Timofey Berdikin","Mihail Batov","Liudmila Simonova",
+"Nikolaj Ponagaibo","Sergey Bazanov","Stepan Lipin","Ivan Berdikin",
+"Mariya Kolesova","Nikolaj Kremnev","Pavel Kremnev","Evgeny Terehin",
+"Ekaterina Lipina","Sergey Berdikin","Alexander Bazanov",
+"Victor Shapovalov","Alexander Lipin","Leonid Batov",
+"Marina Tolkunova","Klavdiya Bazanova","Dmitriy Tolkunov",
+"Alena Lipina","Galina Berdikina","Nadejda Tolkunova","Vasily Simonov"]).
+
+question(["who", "how_many"]).
+
+copular_verb(["is"]).
+
+preposition(["of"]).
+
+verb(["does","have"]).
+
+pronoun([she, he]).
+
+relation([son,daughter,husband,wife,brother,sister,mother,father,
+grandmother,grandfather,uncle,aunt,nephew,niece,grandson,granddaughter]).
+
+relations([sons,daughters,husbands,wifes,brothers,sisters,mothers,
+fathers,grandmothers,grandfathers,uncles,aunts,nephews,nieces,
+grandsons,granddaughters]).
+
+question_mark(["?"]).
+
+convert(sons,son).
+convert(daughters,daughter).
+convert(husbands,husband).
+convert(wifes,wife).
+convert(brothers,brother).
+convert(sisters,sister).
+convert(mothers,mother).
+convert(fathers,father).
+convert(grandmothers,grandmother).
+convert(grandfathers,grandfather).
+convert(uncles,uncle).
+convert(aunts,aunt).
+convert(nephews,nephew).
+convert(nieces,niece).
+convert(grandsons,grandson).
+convert(granddaughters,granddaughter).
+
+count(she,L,Rel,R):-
+  check(G_name,X,Rel), not(member(X,L)),!,
+  append(L,[X],L1), count(G_name,L1,Rel,R).
+count(she,L,Rel,R):-
+  append(L,[],R).
+
+count(he,L,Rel,R):-
+  check(G_name,X,Rel), not(member(X,L)),!,
+  append(L,[X],L1), count(G_name,L1,Rel,R).
+count(he,L,Rel,R):-
+  append(L,[],R).
+
+count(Name,L,Rel,R):-
+  check(Name,X,Rel), not(member(X,L)),!,
+  append(L,[X],L1), count(Name,L1,Rel,R).
+count(Name,L,Rel,R):-
+  append(L,[],R).
+  
+
+% how_many _relat_s does _name_ have ?
+check_question_how_many(L):-
+  L = [QWord,Rel,Verb1,Name,Verb2,QMark],
+  question(QW),member(QWord,QW),
+  relations(R),member(Rel,R),
+  verb(V),member(Verb1,V), member(Verb2,V),
+  question_mark(Q),member(QMark,Q),
+  convert(Rel,Rel2),count(Name,[],Rel2,Rr),!,
+  write(Name),write(" has "),leng(Rr,N),write(N),write(" "),
+  write(Rel), write(": "), write(Rr),nl.
+
+% who is _relat_ of _name_ ?
+choose_q_who(L):- leng(L,A), check_question_who(L,A).
+
+choose_c_who(her,X,Rel):- check(G_name,X,Rel).
+choose_c_who(his,X,Rel):- check(G_name,X,Rel).
+
+check_question_who(L,6):-
+  L = [QWord,CV,Rel,Pr,Name,QMark],
+  question(QW),member(QWord,QW),
+  copular_verb(C), member(CV,C),
+  relation(R),member(Rel,R),
+  preposition(P), member(Pr,P),
+  family(F), member(Name,F),
+  question_mark(Q),member(QMark,Q),
+  findall(X,check(Name,X,Rel),LL),
+  write(Rel), write(" of "),write(Name),
+  write(" is " ),write(LL),nl,!.
+
+check_question_who(L,5):-
+  L = [QWord,CV,Pr,Rel,QMark],
+  question(QW),member(QWord,QW),
+  copular_verb(C), member(CV,C),
+  relation(R),member(Rel,R),
+  question_mark(Q),member(QMark,Q),
+  findall(X,choose_c_who(Pr,X,Rel),LL),
+  write(Pr), write(" "), write(Rel), write(" is " ),write(LL),nl.
+
+% is _name_ _relat_ of _name_ ?
+
+check_question_is(L):-
+  leng(L,A), A == 6,
+  L = [CV,Pronoun,Rel,Pr,Name,QMark],
+  copular_verb(C), member(CV,C),
+  pronoun(S),member(Pronoun,S),!,
+  relation(R),member(Rel,R),
+  preposition(P), member(Pr,P),
+  family(F), member(Name,F),
+  question_mark(Q),member(QMark,Q),
+  choose_c_is(Pronoun,Name,Rel),
+  write(L), write(" - YES"),nl.
+
+check_question_is(L):-
+  leng(L,A), A == 6,
+  L = [L1,N1,Rel,Pr,N2,L6],
+  copular_verb(C), member(L1,C),
+  family(F), member(N1,F),
+  relation(R),member(Rel,R),
+  preposition(P), member(Pr,P),
+  member(N2,F),
+  question_mark(Q),member(L6,Q),
+  check(N2,N1,Rel),
+  %G_name = N1,
+  write(L), write(" - YES"),nl.
+
+choose_c_is(N1,N2,Rel):- check(N1,N2,Rel).
+choose_c_is(she,N,Rel):-
+  check(N,G_name,Rel).
+choose_c_is(he,N,Rel):- check(G_name,N,Rel).
+
+?- search_rel("Anastasia Ponagaibo","Anna Terehina", _).
+
+
+
+%L1 = ["is","Vasilisa Kolesova",grandmother,"of","Liudmila Simonova","?"],
+%check_question_is(L1), 
+%write("last f: "), write(G_name_f),nl,
+%L2 = ["is",she,mother,"of","Anastasia Simonova","?"],
+%check_question_is(L2).
+
+
+%L1 = ["who","is",grandson,"of","Vasilisa Kolesova","?"],
+%choose_q_who(L1),
+%L2 = ["is","Liudmila Simonova",mother,"of","Vera Bazanova","?"],
+%check_question_is(L2),
+%L3 = ["how_many", sons, "does", "Olga Bazanova", "have", "?"], 
+%check_question_how_many(L3).
+%L1 = ["how_many", grandsons, "does", "Vasilisa Kolesova", "have", "?"],
+%check_question_how_many(L1), write("last female: "), write(G_name_f),nl.
+%L2 = ["how_many", granddaughters, "does", she, "have", "?"],
+%check_question_how_many(L2).
+%retract(lastname(_)), lastname(Y), write(Y),nl.
+
+%A is 2, 
+%(A > 2) -> write("a greater than 2"),nl ; write("a less than 2"),nl.
+
+
+
+
+
