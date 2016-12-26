@@ -1,0 +1,110 @@
+%-------- std predicates --------
+my_leng([],0).
+my_leng([_|X],N):-
+  my_leng(X,M), 
+  N is M+1.
+
+my_memb(X,[X|_]).
+my_memb(X,[_|Y]):-
+  my_memb(X,Y).
+
+my_app([],X,X).
+my_app([X|Y],Z,[X|T]):-
+  my_app(Y,Z,T).
+
+my_rem(X,[X|Y],Y).
+my_rem(X,[Z|Y],[Z|Y1]):-
+  my_rem(X,Y,Y1).
+
+my_sublist(X,Y):-
+  my_app(_,Z,Y),
+  my_app(X,_,Z).
+
+my_perm([],[]).
+my_perm(L,[X|T]):-
+  my_rem(X,L,Z),
+  my_perm(Z,T).
+
+%---------- predicates for ordinal list -----------
+ord_app(X,[],X).
+ord_app(X,[e(C,D)|Y],M):-
+  my_leng(X,N), 
+  N1 is N + 1,
+  my_app(X,[e(C,N1)],L), 
+  ord_app(L,Y,M).
+
+ord_perm([],[]).
+ord_perm(L,X):-
+  my_perm(L,M),
+  ord_app([],M,X).
+
+decr([e(A,N)],[e(A,M)]):-
+  M is N-1.
+decr([e(A,N)|T],[e(A,M)|T1]):-
+  M is N-1, 
+  decr(T,T1).
+
+ord_rem(e(A,N),[e(A,N)|[]], []).
+ord_rem(e(A,N),[e(A,N)|T],L):- 
+  decr(T,L).
+ord_rem(X, [Y|T], [Y|T1]):-
+  ord_rem(X,T,T1).
+
+%---------- my predicates 14 --------
+next_std(X,Y,L):- 
+  append(_,[X,Y|_],L).
+
+my_next(X,Y,[X,Y|_]).
+  my_next(X,Y,[_|L]):- 
+  my_next(X,Y,L).
+
+ord_next(X, e(A,N), [X,e(A,N)|_]).
+  ord_next(X,e(A,N),[_|L]):- 
+  ord_next(X,e(A,N),L).
+
+
+%-----------
+
+my_memb(X,[X|_]).
+my_memb(X,[_|Y]):-
+  my_memb(X,Y).
+
+
+geomprog(A):-
+  my_leng(A,N), 
+  N =:= 1.
+geomprog([A|T],K):-
+  my_leng([A|T],N),
+  N > 1,
+  my_next(A,X,[A|T]), 
+  K is X/A,
+  geomprog(T,K1),
+  K =:= K1.
+  
+
+
+
+
+
+
+/*
+?- my_leng([a,b,c,d], N), write(N), nl.
+?- N is list_length([1,2,3,4,5]), write(N), nl.
+
+?- my_memb(c, [a,b,c,d,e,f]).
+?- member(3, [1,2,3,4]).
+
+?- my_app([1,2,3], [a,b,c], X), write(X), nl.
+?- append([a,b], [4,5], X), write(X), nl.
+
+?- my_rem(a, [a,b,c,d], X), write(X), nl.
+
+?- my_sublist(X, [a,b]), write(X), nl.
+
+?- my_perm([a,b,c], X), write(X), nl.
+?- next_std(b, X, [a,b,c,d]), write(X), nl.
+?- ord_app([e(q,1), e(w,2)], [e(s,7), e(d,8)], X), write(X), nl.
+?- my_next(c, X, [a,b,c,d]), write(X), nl.
+?- ord_perm([e(a,1), e(b,2), e(c,3)], X), write(X), nl.
+?- ord_rem(e(s,3), [e(q,1), e(w,2), e(s,3), e(d,4)], X), write(X), nl.
+?- ord_next(e(s,3), X, [e(q,1), e(w,2), e(s,3), e(d,4)]), write(X), nl.*/
