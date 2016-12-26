@@ -1,0 +1,60 @@
+operation("+",0).
+operation("-",0).
+operation("*",1).
+operation(":",1).
+
+expr([Num|T],T,number(Num),2):-
+  write("\nnum: "), write(Num).
+expr(Input,Tail,Expr,N):-
+  N=<1,
+  N1 is N+1,
+  write("\nin expr, N = "), write(N),
+  write("\ninput:\n"), write(Input),
+
+  expr(Input,Tail1,Expr1,N1),
+  subexpr(Tail1,Tail,Expr1,Expr,N).
+
+subexpr([O|T],Tail,Expr1,Expr,N):- 
+  operation(O,N), 
+  N1 is N+1,
+  write("\nin subexpr, N = "), write(N),
+  write("\noperation:"), write(O),
+  expr(T,List1,Expr2,N1),!,
+  interpret(O,Expr1,Expr2,Term),
+  subexpr(List1,Tail,Term,Expr,N).
+subexpr(List,List,Exp,Exp,_).
+
+interpret("+",Left,Right,add(Left,Right)).
+interpret("-",Left,Right,subtract(Left,Right)).
+interpret("*",Left,Right,multiply(Left,Right)).
+interpret(":",Left,Right,divide(Left,Right)).
+
+calculate(Input,Res):-
+  expr(Input,_,Term,0),
+  modify(Term,Res).
+
+modify(add(Left,Right),["+"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(subtract(Left,Right),["-"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(multiply(Left,Right),["*"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(divide(Left,Right),[":"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(number(N),[N]).
+
+?- 
+L2 = [12, "*", 33, "-", 7],
+write("\n\n** convert "), write(L2), write(" into prefix **\n"),
+calculate(L2,Res2),
+write(Res2),
+write("\n").
+

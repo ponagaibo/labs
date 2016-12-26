@@ -1,0 +1,37 @@
+a_expr(E,V):-
+  append(T,['+'|S],E),
+  a_term(T,Vt),
+  a_expr(S,Ve),
+  V is Vt+Ve.
+
+a_expr(E,V):-
+  append(T,['-'|S],E),
+  a_term(T,Vt),
+  a_expr(S,Ve),
+  V is Vt-Ve.
+
+a_expr(E,V):-
+  a_term(E,V).
+
+a_term(T,V):-
+  a_number(T,V).
+
+a_term(T,V):-
+  append(N,['*'|S],T),
+  a_number(N,Vn),
+  a_term(S,Vs),
+  V is Vn*Vs.
+
+a_term(T,V):-
+  append(N,[':'|S],T),
+  a_number(N,Vn),
+  a_term(S,Vs),
+  V is Vs/Vn.
+
+a_number([N],N):-
+  number(N).
+
+calculate(L,V):-
+  reverse(L,L1),
+  a_expr(L1,V).
+

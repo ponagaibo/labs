@@ -1,0 +1,55 @@
+operation("+",0).
+operation("-",0).
+operation("*",1).
+operation(":",1).
+
+expr(2,[Num|Tail],Tail,Term):- 
+  Term = number(Num).
+expr(N,List,Tail,Expr):- 
+  N<2,
+  N1 is N+1,
+  expr(N1,List,List1,Expr1),!,
+  subexpr(N,List1,Tail,Expr1,Expr).
+
+subexpr(N,[O|List],Tail,Expr1,Expr):- 
+  operation(O,N), 
+  N1 is N+1,
+  expr(N1,List,List1,Expr2),!,
+  term(O,N,Expr1,Expr2,Term),
+  subexpr(N,List1,Tail,Term,Expr).
+subexpr(_,List,List,Exp,Exp).
+
+term("+",0,Left,Right,add(Left,Right)).
+term("-",0,Left,Right,subtract(Left,Right)).
+term("*",1,Left,Right,multiply(Left,Right)).
+term(":",1,Left,Right,divide(Left,Right)).
+
+modify(add(Left,Right),["+"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(subtract(Left,Right),["-"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(multiply(Left,Right),["*"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(divide(Left,Right),[":"|List]):-
+  modify(Left,LL),
+  modify(Right,LR),
+  append(LL,LR,List).
+modify(number(N),[Num]):-
+  N=Num.
+
+calculate(List,Res):-
+  expr(0,List,_,Term),
+  modify(Term,Res).
+
+%?- calculate([3],Res),
+?- calculate([3,"*",2, "-", 7, ":", 6],Res),
+write(Res),
+write("\n").
+%,"*",2, "-", 7, ":", 6
+
