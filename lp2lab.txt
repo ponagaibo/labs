@@ -1,0 +1,236 @@
+  В педагогическом институте Аркадьева, Бабанова, Корсакова, Дашков, 
+Ильин и Флеров преподают географию, английский, французский, 
+немецкий языки, историю и математику. 
+  Преподаватель немецкого языка и преподаватель математики в 
+студенческие годы занимались художественной гимнастикой. 
+  Ильин старше Флерова, но стаж работы у него меньше, чем у 
+преподавателя географии. 
+  Будучи студентками, Аркадьева и Бабанова учились вместе в 
+одном университете. 
+  Все остальные окончили педагогический институт. 
+  Флеров - отец преподавателя французского языка. 
+  Преподаватель английского язык - самый старший из всех и по возрасту 
+и по стажу. 
+  Он работает в этом институте с тех пор, как окончил его. 
+  Преподаватели математики и истории - его бывшие студенты. 
+  Аркадьева старше преподавателя немецкого языка. 
+  Кто какой предмет преподает?
+
++Немецкий - девушка
++математика - девушка
++Ильин старше Флерова --
++Ильин старше франц
++Ильин не география
++Ильин не английский
++Ильин не франц
++англ самый старший
++Флеров не английский
++Флеров старше французского
++Флеров не французский
++Арк не англ
++Арк не мат
++Арк не ист
++Бабанова не англ
++Баб не мат
++Баб не ист
++Арк старше немецк
+
+
+А - фр
+Б-нем
+К-мат
+Д-англ
+И-ист
+Ф-геогр
+
+
+[geo, eng, fr, ger, his, math]
+[A,B,K,D,I,F]
+
+gend(A) = f.
+gend(B) = f.
+gend(K) = f.
+gend(D) = m.
+gend(I) = m.
+gend(F) = m.
+
+gend(ger) = f.
+gend(math) = f.
+
+contr(V):-
+  data(V,F,A,fact,TF),
+  logicalnot(TF,FT),
+  data(V,F,A,_,FT).
+
+logicalnot(true,false).
+logicalnot(false,true).
+
+data(_,old, [I,F],fact,true).
+data(_,exp, [geo,I], fact, true).
+data([A,_,_,_,_,_],stud, [un],fact,true).
+data([_,B,_,_,_,_],stud, [un],fact,true).
+data([_,_,H,_,_,_],stud, [ped],fact,true).
+data([_,_,_,D,_,_],stud, [ped],fact,true).
+data([_,_,_,_,I,_],stud, [ped],fact,true).
+data([_,_,_,_,_,F],stud, [ped],fact,true).
+data([_,_,_,_,_,F],father,[fr],fact,true).
+data(_,old,[eng,_],fact,true).
+data(_,exp,[eng,_],fact,true).
+data(_,teach,[eng,math],fact,true).
+data(_,teach,[eng,hys],fact,true).
+data([A,_,_,_,_,_],old, [ger],fact,true).
+
+
+
+
+my_memb(X,[X|_]).
+my_memb(X,[_|Y]):-
+  my_memb(X,Y).
+
+my_rem(X,[X|Y],Y).
+my_rem(X,[Z|Y],[Z|Y1]):-
+  my_rem(X,Y,Y1).
+
+my_perm([],[]).
+my_perm(L,[X|T]):-
+  my_rem(X,L,Z),
+  my_perm(Z,T).
+
+surname(arkadeva).
+surname(babanova).
+surname(korsakova).
+surname(dashkov).
+surname(ilin).
+surname(flerov).
+
+prof(geography).
+prof(english).
+prof(french).
+prof(german).
+prof(history).
+prof(math).
+
+gender(f).
+genger(m).
+
+pers(babanova,f).
+pers(korsakova,f).
+pers(arkadeva,f).
+pers(dashkov,m).
+pers(ilin,m).
+pers(flerov,m).
+
+last([_,_,_,_,_,X],X).
+
+order(X,Y,[X|T]):-
+  my_memb(Y,T).
+order(X,Y,[_|T]):-
+  order(X,Y,T).
+
+solve(Res):-
+  my_perm([pers(arkadeva,f),pers(babanova,f),pers(korsakova,f),pers(dashkov,m),pers(ilin,m),pers(flerov,m)],[X1,X2,X3,X4,X5,X6]),
+  my_perm([geography,english,french,german,history,math],[Y1,Y2,Y3,Y4,Y5,Y6]),
+  %my_perm([geography,english,french,german,history,math],X8),
+  Res = [p(X1,Y1),p(X2,Y2),p(X3,Y3),p(X4,Y4),p(X5,Y5),p(X6,Y6)],
+  my_memb(p(pers(_,f),german),Res),
+  my_memb(p(pers(_,f),math),Res),
+  %order(p(flerov,m),p(pers(ilin,m),_),Res),
+  order(p(_,french),p(pers(ilin,m),_),Res),
+  not(my_memb(p(pers(ilin,m),french),Res)),
+  not(my_memb(p(pers(ilin,m),english),Res)),
+  last(Res,p(_,english)),
+  not(my_memb(p(pers(flerov,m),english),Res)),
+  not(my_memb(p(pers(flerov,m),french),Res)),
+  order(p(_,french),p(pers(flerov,m),_),Res),
+  not(my_memb(p(pers(arkadeva,f),english),Res)),
+  not(my_memb(p(pers(arkadeva,f),math),Res)),
+  not(my_memb(p(pers(arkadeva,f),history),Res)),
+  not(my_memb(p(pers(babanova,f),english),Res)),
+  not(my_memb(p(pers(babanova,f),math),Res)),
+  not(my_memb(p(pers(babanova,f),history),Res)),
+  order(p(_,german),p(pers(arkedeva,f),_),Res),
+  write("i am here!333"),nl,
+  write(Res),nl.
+
+?- solve(X), nl.
+
+
+
+
+
+
+
+
+
+===========
+
+my_memb(X,[X|_]).
+my_memb(X,[_|Y]):-
+  my_memb(X,Y).
+
+my_rem(X,[X|Y],Y).
+my_rem(X,[Z|Y],[Z|Y1]):-
+  my_rem(X,Y,Y1).
+
+my_perm([],[]).
+my_perm(L,[X|T]):-
+  my_rem(X,L,Z),
+  my_perm(Z,T).
+
+surname(arkadeva).
+surname(babanova).
+surname(korsakova).
+surname(dashkov).
+surname(ilin).
+surname(flerov).
+
+prof(geography).
+prof(english).
+prof(french).
+prof(german).
+prof(history).
+prof(math).
+
+gender(f).
+genger(m).
+
+pers(babanova,f).
+pers(korsakova,f).
+pers(arkadeva,f).
+pers(dashkov,m).
+pers(ilin,m).
+pers(flerov,m).
+
+last([_,_,_,_,_,X],X).
+
+order(X,Y,[X|T]):-
+  my_memb(Y,T).
+order(X,Y,[_|T]):-
+  order(X,Y,T).
+
+solve(Res):-
+  my_perm([pers(arkadeva,f),pers(babanova,f),pers(korsakova,f),pers(dashkov,m),pers(ilin,m),pers(flerov,m)],[X1,X2,X3,X4,X5,X6]),
+  my_perm([geography,english,french,german,history,math],[Y1,Y2,Y3,Y4,Y5,Y6]),
+  Res = [p(X1,Y1),p(X2,Y2),p(X3,Y3),p(X4,Y4),p(X5,Y5),p(X6,Y6)],
+  my_memb(p(pers(_,f),german),Res),
+  my_memb(p(pers(_,f),math),Res),
+  order(p(pers(flerov,m),_),p(pers(ilin,m),_),Res),
+  order(p(_,french),p(pers(ilin,m),_),Res),
+  not(my_memb(p(pers(ilin,m),geography),Res)),
+  not(my_memb(p(pers(ilin,m),french),Res)),
+  not(my_memb(p(pers(ilin,m),english),Res)),
+  last(Res,p(_,english)),
+  not(my_memb(p(pers(flerov,m),english),Res)),
+  not(my_memb(p(pers(flerov,m),french),Res)),
+  order(p(_,french),p(pers(flerov,m),_),Res),
+  not(my_memb(p(pers(arkadeva,f),english),Res)),
+  not(my_memb(p(pers(arkadeva,f),math),Res)),
+  not(my_memb(p(pers(arkadeva,f),history),Res)),
+  not(my_memb(p(pers(babanova,f),english),Res)),
+  not(my_memb(p(pers(babanova,f),math),Res)),
+  not(my_memb(p(pers(babanova,f),history),Res)),
+  order(p(_,german),p(pers(arkadeva,f),_),Res),
+  write("here"),nl,
+  write(Res),nl.
+
+?- solve(X), nl.
