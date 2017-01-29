@@ -145,7 +145,7 @@ void print_a_base(char* path){
 		Person q;
 		int i=1;
 		while(fread(&q,sizeof(Person),1,f)>0){
-			printf("น%d ",i);
+			printf("ยน%d ",i);
 			printf("%s %s %s\nGroup: %d\nMarks: ",q.name,q.initial,q.gen,q.group);
 			int j;
 			for(j=0;j<4;j++){
